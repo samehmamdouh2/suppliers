@@ -91,6 +91,26 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .docs b{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#EEF0FB;color:var(--brand);font-size:13px}
 .docs i{margin-inline-start:auto;font-style:normal;font-size:12.5px;font-weight:600;border-radius:999px;padding:2px 10px;background:#F1F2F6;color:var(--muted)}
 .bi{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.mail{border:1.5px solid #DADDE8;border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 6px 20px rgba(20,24,80,.07)}
+.mbar{display:flex;align-items:center;gap:6px;background:#F3F5FA;padding:9px 14px;font-size:13px;font-weight:600;color:var(--muted);border-bottom:1px solid #E3E5EE}
+.mbar i{width:10px;height:10px;border-radius:50%;background:#D5D8E3}
+.mbar span{margin-inline-start:8px}
+.mh{display:grid;grid-template-columns:4.8em minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 14px;border-bottom:1px solid #EEF0F5;font-size:14.5px}
+.mh>span{color:var(--muted);font-size:13.5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip2{direction:ltr;background:#EEF2FA;color:var(--brand);border-radius:999px;padding:3px 11px;font-size:13.5px;font-weight:600}
+#vSub{font-weight:700;overflow-wrap:anywhere}
+.mb{position:relative;padding:14px 14px 8px}
+.mb pre{margin:0;font:inherit;font-size:14.5px;line-height:1.75;white-space:pre-wrap;max-height:300px;overflow:auto;padding-inline-end:44px}
+.mb .cp{position:absolute;top:10px;inset-inline-end:10px}
+.matt{display:flex;align-items:center;gap:8px;margin:0 14px 12px;padding:9px 12px;border:1.5px dashed #C9CDDC;border-radius:10px;color:var(--muted);font-size:13.5px}
+.pc svg,.cpi svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px}
+.mf{display:flex;flex-wrap:wrap;gap:10px;padding:14px;background:#FAFBFD;border-top:1px solid #E3E5EE}
+.cp{min-height:36px;width:38px;padding:0;display:grid;place-items:center;border-radius:10px;background:#fff;border:1.5px solid #D6D9E5;color:var(--brand)}
+.cp:hover{background:#F1F3FB}
+.cp svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.cp.ok{background:#E2F3E9;border-color:#9BD3B2;color:var(--ok)}
+.hint{font-size:13.5px;color:var(--muted);margin:10px 2px 0}
 .manual{margin-top:16px;border:1.5px solid #E3E5EE;border-radius:14px;padding:12px 14px}
 .manual summary{cursor:pointer;font-weight:600;color:var(--brand)}
 .mrow{display:grid;grid-template-columns:7.5em minmax(0,1fr) auto;gap:10px;align-items:start;margin-top:10px;font-size:14px}
@@ -98,7 +118,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .mrow code#vSub{direction:rtl}
 .mrow code.body{direction:rtl;white-space:pre-wrap;max-height:160px;overflow:auto}
 button.sm{min-height:36px;padding:4px 12px;font-size:13px}
-@media(max-width:600px){#mGmail,#mOutlook{flex:1 1 40%}.mrow{grid-template-columns:minmax(0,1fr) auto}.mrow span{grid-column:1/-1}}
+@media(max-width:600px){#mMail{flex:1 1 100%;justify-content:center}#mGmail,#mOutlook{flex:1 1 40%}.mf>*{justify-content:center}.mh{grid-template-columns:minmax(0,1fr) auto}.mh>span{grid-column:1/-1}.mrow{grid-template-columns:minmax(0,1fr) auto}.mrow span{grid-column:1/-1}}
 .drop:hover{border-color:var(--brand)}
 .bad .drop{border-color:var(--err);background:#FFF7F6}
 .drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
@@ -222,22 +242,22 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 16px 30p
 
       <div class="f"><label for="u_notes">ملاحظات</label><textarea id="u_notes" maxlength="500" style="min-height:70px"></textarea></div>
 
-      <div class="sendbar">
-        <div class="btns" style="margin-top:0">
+      <h3><span class="hi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3zM3 6l9 7 9-7"/></svg></span>معاينة الرسالة</h3>
+      <div class="mail">
+        <div class="mbar"><i></i><i></i><i></i><span>رسالة جديدة</span></div>
+        <div class="mh"><span>إلى</span><div class="chips" id="cTo"></div><button type="button" class="cp" data-k="to" aria-label="نسخ" title="نسخ"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg></button></div>
+        <div class="mh"><span>نسخة</span><div class="chips" id="cCc"></div><button type="button" class="cp" data-k="cc" aria-label="نسخ" title="نسخ"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg></button></div>
+        <div class="mh"><span>الموضوع</span><b id="vSub"></b><button type="button" class="cp" data-k="sub" aria-label="نسخ" title="نسخ"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg></button></div>
+        <div class="mb"><pre id="vBody"></pre><button type="button" class="cp" data-k="body" aria-label="نسخ" title="نسخ"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg></button></div>
+        <div class="matt"><span class="pc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5 12.6 19a5 5 0 0 1-7-7L13 4.6a3.3 3.3 0 0 1 4.7 4.7L10.4 16.6a1.7 1.7 0 0 1-2.4-2.4L14.8 7.5"/></svg></span><span>أرفق الملفات المطلوبة قبل الإرسال</span></div>
+        <div class="mf">
           <a class="btn" id="mMail" href="#"><svg class="bi" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3zM3 6l9 7 9-7"/></svg>فتح رسالة البريد</a>
           <a class="btn ghost" id="mGmail" href="#" target="_blank" rel="noopener">Gmail</a>
           <a class="btn ghost" id="mOutlook" href="#" target="_blank" rel="noopener">Outlook</a>
         </div>
-        <p class="msg" id="upErr" style="margin-top:10px">راجع الحقول المطلوبة.</p>
       </div>
-
-      <details class="manual" id="manual">
-        <summary>لم تُفتح الرسالة؟ أرسلها يدويًا</summary>
-        <div class="mrow"><span>إلى</span><code id="vTo"></code><button type="button" class="ghost sm" data-c="vTo">نسخ</button></div>
-        <div class="mrow"><span>نسخة (CC)</span><code id="vCc"></code><button type="button" class="ghost sm" data-c="vCc">نسخ</button></div>
-        <div class="mrow"><span>العنوان</span><code id="vSub"></code><button type="button" class="ghost sm" data-c="vSub">نسخ</button></div>
-        <div class="mrow"><span>نص الرسالة</span><code id="vBody" class="body"></code><button type="button" class="ghost sm" data-c="vBody">نسخ</button></div>
-      </details>
+      <p class="msg" id="upErr" style="margin-top:10px">راجع الحقول المطلوبة.</p>
+      <p class="hint">لم تُفتح الرسالة؟ انسخ كل جزء بزر النسخ <span class="cpi"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg></span> بجانبه، والصقه في رسالة جديدة من بريدك.</p>
 
       <div class="card note sign" id="afterMail" hidden style="margin:16px 0 0">
         <strong>خطوة أخيرة:</strong> بعد ما تُرفق الملفات في الرسالة اضغط «إرسال» من برنامج البريد. رقم المتابعة الخاص بك: <b id="afterRef" class="ltr"></b> — احتفظ به للتواصل.
@@ -2821,36 +2841,51 @@ $('fillForm').addEventListener('submit', async e => {
 $('again').addEventListener('click', e => { e.preventDefault(); if (lastUrl) trigger(); });
 
 /* ---------- step 3: send by e-mail ---------- */
-const DOCS = ['نموذج PUF-10-06 بعد التوقيع والختم', 'مستخرج حديث من السجل التجاري', 'البطاقة الضريبية (الوجهين)', 'شهادة التسجيل في ضريبة القيمة المضافة', 'شهادة ISO / الجودة (إن وُجدت)', 'ملف الإكسل من الخطوة 1'];
+const DOCS = ['نموذج PUF-10-06 بعد التوقيع والختم', 'مستخرج حديث من السجل التجاري', 'البطاقة الضريبية (الوجهين)', 'شهادة التسجيل في ضريبة القيمة المضافة', 'شهادة ISO / الجودة (إن وُجدت)', 'ملف بيانات المورد (Excel)'];
 function prefillUpload(){
   const d = store.get();
   if (d){
     if (!$('u_name').value) $('u_name').value = d.name || '';
     if (!$('u_mobile').value) $('u_mobile').value = d.phone || '';
   }
-  $('vTo').textContent = TO; $('vCc').textContent = CC;
   buildMail();
 }
 function mailParts(short){
   const ref = currentRef(), d = store.get() || {}, v = id => $(id).value.trim();
-  const subject = 'طلب قيد مورد جديد – ' + ref + ' – ' + (v('u_name') || 'مورد');
-  const L = ['رقم المتابعة: ' + ref, '', 'الاسم التجاري: ' + v('u_name'), 'اسم المسؤول: ' + v('u_person'), 'الموبايل: ' + v('u_mobile')];
-  const add = (k, x) => { if (x) L.push(k + ': ' + x); };
-  if (short) { L.push('', 'المرفقات: النموذج الموقّع والمختوم، السجل التجاري، البطاقة الضريبية، شهادة القيمة المضافة، شهادة ISO إن وُجدت، ملف الإكسل (به كل البيانات).'); return { subject, body: L.join('\n'), ref }; }
-  add('العنوان الرئيسي', d.hq); add('الفروع', (d.branches || '').replace(/\n/g, ' / ')); add('رقم السجل التجاري', d.cr); add('رقم البطاقة الضريبية', d.tax);
-  add('تليفون الشركة', d.phone); add('بريد الشركة', d.email);
-  if (d.iso || d.isoOther) add('شهادات الجودة', [d.iso ? 'ISO 9000' : '', d.isoOther || ''].filter(Boolean).join('، '));
-  if (d.work) add('سابقة الأعمال', d.work.replace(/\n/g, ' / ').slice(0, 300) + (d.work.length > 300 ? '…' : ''));
-  add('ملاحظات', v('u_notes').replace(/\n/g, ' / '));
-  L.push('', 'المرفقات:'); DOCS.forEach(x => L.push('- ' + x));
-  return { subject, body: L.join('\n'), ref };
+  const name = v('u_name') || 'مورد', person = v('u_person'), mob = v('u_mobile');
+  const subject = 'طلب قيد مورد جديد | ' + ref + ' | ' + name;
+  const HR = '────────────────────';
+  const L = ['السادة / إدارة المشتريات – ESTAR Egypt For Industries', 'تحية طيبة وبعد،', '',
+    'نتشرف بتقديم طلب قيد شركتنا ضمن سجل الموردين المعتمدين لديكم، مرفقًا به نموذج طلب قيد الموردين (PUF-10-06) موقّعًا ومختومًا والمستندات المطلوبة.', '',
+    'رقم المتابعة: ' + ref];
+  const sig = ['', 'وتفضلوا بقبول فائق الاحترام،', '', person, name, 'موبايل: ' + mob];
+  if (short) {
+    const S = ['السادة / إدارة المشتريات – ESTAR Egypt', 'تحية طيبة وبعد،', '', 'مرفق طلب قيد شركتنا (نموذج PUF-10-06) موقّعًا ومختومًا والمستندات المطلوبة.', '', 'رقم المتابعة: ' + ref,
+      'المرفقات: النموذج، السجل التجاري، البطاقة الضريبية، شهادة القيمة المضافة، ISO (إن وُجدت)، ملف البيانات.', '', 'مع خالص التحية،', person, name, mob];
+    return { subject, body: S.join('\n'), ref };
+  }
+  const row = (k, x) => { if (x) L.push('▪ ' + k + ': ' + x); };
+  L.push('', HR, 'بيانات المورد', HR);
+  row('الاسم التجاري', name); row('العنوان الرئيسي', d.hq); row('الفروع', (d.branches || '').replace(/\n/g, ' / '));
+  row('رقم السجل التجاري', d.cr); row('رقم البطاقة الضريبية', d.tax); row('التليفون', d.phone); row('البريد الإلكتروني', d.email);
+  if (d.iso || d.isoOther) row('شهادات الجودة', [d.iso ? 'ISO 9000' : '', d.isoOther || ''].filter(Boolean).join('، '));
+  if (d.work) row('سابقة الأعمال', d.work.replace(/\n/g, ' / ').slice(0, 300) + (d.work.length > 300 ? '…' : ''));
+  row('مسؤول التواصل', person + (mob ? ' – ' + mob : ''));
+  L.push('', HR, 'المرفقات', HR);
+  DOCS.forEach((x, i) => L.push((i + 1) + '. ' + x));
+  if (v('u_notes')) L.push('', 'ملاحظات: ' + v('u_notes').replace(/\n/g, ' / '));
+  return { subject, body: L.concat(sig).join('\n'), ref };
 }
+let COPY = {};
+function chips(el, list){ el.textContent = ''; list.split(',').filter(Boolean).forEach(a => { const c = document.createElement('span'); c.className = 'chip2'; c.textContent = a.trim(); el.appendChild(c); }); }
 function buildMail(){
   const m = mailParts(), ms = mailParts(true), q = encodeURIComponent;
   $('mMail').href = 'mailto:' + TO + '?cc=' + q(CC) + '&subject=' + q(ms.subject) + '&body=' + q(ms.body);
   $('mGmail').href = 'https://mail.google.com/mail/?view=cm&fs=1&to=' + q(TO) + '&cc=' + q(CC) + '&su=' + q(m.subject) + '&body=' + q(m.body);
   $('mOutlook').href = 'https://outlook.office.com/mail/deeplink/compose?to=' + q(TO) + '&cc=' + q(CC) + '&subject=' + q(m.subject) + '&body=' + q(m.body);
+  chips($('cTo'), TO); chips($('cCc'), CC);
   $('vSub').textContent = m.subject; $('vBody').textContent = m.body;
+  COPY = { to: TO.split(',').join('; '), cc: CC.split(',').join('; '), sub: m.subject, body: m.body };
 }
 $('upForm').addEventListener('input', e => { e.target.closest('.f')?.classList.remove('bad'); buildMail(); });
 $('upForm').addEventListener('submit', e => e.preventDefault());
@@ -2873,8 +2908,8 @@ function validate3(){
   $('afterRef').textContent = ref; $('afterMail').hidden = false;
 }));
 document.addEventListener('click', e => {
-  const b = e.target.closest('[data-c]'); if (!b) return;
-  navigator.clipboard?.writeText($(b.dataset.c).textContent).then(() => { b.textContent = 'تم'; setTimeout(() => b.textContent = 'نسخ', 1200); }).catch(() => {});
+  const b = e.target.closest('.cp[data-k]'); if (!b) return;
+  navigator.clipboard?.writeText(COPY[b.dataset.k] || '').then(() => { b.classList.add('ok'); setTimeout(() => b.classList.remove('ok'), 1200); }).catch(() => {});
 });
 
 /* ---------- tracking number ---------- */
