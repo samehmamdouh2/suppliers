@@ -156,6 +156,10 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 16px 30p
     <form class="card" id="upForm" method="POST" enctype="multipart/form-data" novalidate>
       <h2>رفع النموذج الموقّع والمختوم</h2>
       <p class="lead">ارفع النموذج بعد التوقيع والختم مع المستندات المطلوبة، وستصل إلى إدارة المشتريات بالبريد الإلكتروني.</p>
+      <div class="note" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
+        <span>رقم طلب القيد الخاص بك:</span><strong class="ref" id="upRef" style="font-size:22px;padding:4px 14px"></strong>
+        <small style="flex-basis:100%;color:var(--muted)">احتفظ بهذا الرقم، سيظهر في البريد المرسل إلى إدارة المشتريات وفي رسالة التأكيد إليكم.</small>
+      </div>
       <div class="warn" id="noMail" hidden>لم يُضبط بريد الاستلام في الصفحة بعد، لذلك الإرسال متوقف مؤقتًا.</div>
 
       <h3>بيانات المرسِل</h3>
@@ -2705,7 +2709,8 @@ function route(){
   document.querySelector('.steps').hidden = v === 'qr';
   if (v === 'upload') prefillUpload();
   if (v === 'qr') drawQR();
-  if (v === 'sent') showRef();
+  if (v === 'sent') { showRef(); memRef = null; }
+  if (v === 'upload') $('upRef').textContent = currentRef();
   window.scrollTo(0, 0);
 }
 addEventListener('hashchange', route);
@@ -2886,8 +2891,8 @@ $('upForm').addEventListener('submit', async e => {
     if (d) {
       [['العنوان_الرئيسي', d.hq], ['الفروع', d.branches], ['السجل_التجاري', d.cr], ['البطاقة_الضريبية', d.tax], ['تليفون_الشركة', d.phone], ['بريد_الشركة', d.email], ['سابقة_الأعمال', d.work], ['ISO_9000', d.iso ? 'نعم' : 'لا'], ['شهادات_أخرى', d.isoOther]].forEach(([k, v]) => put(k, v));
     }
-    const ref = makeRef();
-    try { localStorage.setItem(KEY + '_ref', ref); } catch (e2) {}
+    const ref = currentRef();
+    try { localStorage.setItem(KEY + '_ref', ref); localStorage.removeItem(KEY + '_pending'); } catch (e2) {}
     $('h_ref').value = ref;
     $('h_subject').value = 'طلب قيد مورد جديد – ' + ref + ' – ' + $('u_name').value.trim();
     $('h_auto').value = 'تم استلام طلب قيد المورد الخاص بكم لدى حديد العشري (ESTAR Egypt). رقم المتابعة: ' + ref + ' — برجاء ذكره عند التواصل. سيتم مراجعة المستندات والتواصل معكم.';
@@ -2909,6 +2914,13 @@ function makeRef(){
   const d = new Date(), p = n => String(n).padStart(2, '0');
   const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', r = new Uint32Array(4); crypto.getRandomValues(r);
   return 'SUP-' + String(d.getFullYear()).slice(2) + p(d.getMonth() + 1) + p(d.getDate()) + '-' + [...r].map(x => A[x % A.length]).join('');
+}
+let memRef = null;
+function currentRef(){
+  if (memRef) return memRef;
+  try { memRef = localStorage.getItem(KEY + '_pending'); } catch (e) {}
+  if (!memRef) { memRef = makeRef(); try { localStorage.setItem(KEY + '_pending', memRef); } catch (e) {} }
+  return memRef;
 }
 function showRef(){
   let ref = null; try { ref = localStorage.getItem(KEY + '_ref'); } catch (e) {}
