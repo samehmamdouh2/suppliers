@@ -77,6 +77,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .meter.full i{background:var(--err)}
 .warn{background:#FFF1F0;color:var(--err);border-radius:10px;padding:12px 14px;font-size:14px;margin-bottom:14px}
 .okbox{text-align:center;padding:30px 10px}
+.ref{display:inline-block;direction:ltr;font-size:clamp(26px,6vw,36px);font-weight:700;letter-spacing:.06em;color:var(--brand);background:#F1F2FB;border:2px dashed #B9BDD0;border-radius:12px;padding:10px 22px}
 .okbox .tick{width:72px;height:72px;border-radius:50%;background:#E6F4EC;color:var(--ok);display:grid;place-items:center;margin:0 auto 14px;font-size:38px}
 .qrs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .qr{border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}
@@ -179,7 +180,8 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 16px 30p
 
       <input type="hidden" name="_subject" id="h_subject">
       <input type="hidden" name="_cc" id="h_cc">
-      <input type="hidden" name="_autoresponse" value="تم استلام طلب قيد المورد الخاص بكم لدى حديد العشري (ESTAR Egypt). سيتم مراجعة المستندات والتواصل معكم.">
+      <input type="hidden" name="_autoresponse" id="h_auto">
+      <input type="hidden" name="رقم_المتابعة" id="h_ref">
       <input type="hidden" name="_template" value="table">
       <input type="hidden" name="_next" id="h_next">
       <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -196,6 +198,12 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 16px 30p
     <div class="card okbox">
       <div class="tick" aria-hidden="true">✓</div>
       <h2>تم إرسال طلبك</h2>
+      <div id="refBox" hidden>
+        <p class="lead" style="margin:6px 0 4px">رقم طلب القيد (رقم المتابعة)</p>
+        <div class="ref" id="refNo"></div>
+        <div class="btns" style="justify-content:center;margin:10px 0 6px"><button type="button" class="ghost" id="copyRef">نسخ الرقم</button></div>
+        <p style="font-size:14px;color:var(--muted);margin:0 0 14px">احتفظ بهذا الرقم (صوّر الشاشة) واذكره عند التواصل مع إدارة المشتريات. أُرسل أيضًا إلى بريدكم الإلكتروني.</p>
+      </div>
       <p class="lead">وصل النموذج الموقّع إلى إدارة المشتريات، وسيتم التواصل معكم بعد مراجعته.</p>
       <a class="btn ghost" href="#upload">إرسال ملفات أخرى</a>
     </div>
@@ -2697,6 +2705,7 @@ function route(){
   document.querySelector('.steps').hidden = v === 'qr';
   if (v === 'upload') prefillUpload();
   if (v === 'qr') drawQR();
+  if (v === 'sent') showRef();
   window.scrollTo(0, 0);
 }
 addEventListener('hashchange', route);
@@ -2877,7 +2886,11 @@ $('upForm').addEventListener('submit', async e => {
     if (d) {
       [['العنوان_الرئيسي', d.hq], ['الفروع', d.branches], ['السجل_التجاري', d.cr], ['البطاقة_الضريبية', d.tax], ['تليفون_الشركة', d.phone], ['بريد_الشركة', d.email], ['سابقة_الأعمال', d.work], ['ISO_9000', d.iso ? 'نعم' : 'لا'], ['شهادات_أخرى', d.isoOther]].forEach(([k, v]) => put(k, v));
     }
-    $('h_subject').value = 'طلب قيد مورد جديد – ' + $('u_name').value.trim();
+    const ref = makeRef();
+    try { localStorage.setItem(KEY + '_ref', ref); } catch (e2) {}
+    $('h_ref').value = ref;
+    $('h_subject').value = 'طلب قيد مورد جديد – ' + ref + ' – ' + $('u_name').value.trim();
+    $('h_auto').value = 'تم استلام طلب قيد المورد الخاص بكم لدى حديد العشري (ESTAR Egypt). رقم المتابعة: ' + ref + ' — برجاء ذكره عند التواصل. سيتم مراجعة المستندات والتواصل معكم.';
     $('h_cc').value = CC;
     if (!CC) $('h_cc').remove();
     $('h_next').value = location.href.split('#')[0] + '#sent';
@@ -2890,6 +2903,18 @@ $('upForm').addEventListener('submit', async e => {
   }
 });
 buildSlots();
+
+/* ---------- tracking number ---------- */
+function makeRef(){
+  const d = new Date(), p = n => String(n).padStart(2, '0');
+  const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', r = new Uint32Array(4); crypto.getRandomValues(r);
+  return 'SUP-' + String(d.getFullYear()).slice(2) + p(d.getMonth() + 1) + p(d.getDate()) + '-' + [...r].map(x => A[x % A.length]).join('');
+}
+function showRef(){
+  let ref = null; try { ref = localStorage.getItem(KEY + '_ref'); } catch (e) {}
+  $('refBox').hidden = !ref; if (ref) $('refNo').textContent = ref;
+}
+$('copyRef').addEventListener('click', () => { navigator.clipboard?.writeText($('refNo').textContent).then(() => { $('copyRef').textContent = 'تم النسخ'; setTimeout(() => $('copyRef').textContent = 'نسخ الرقم', 1500); }).catch(() => {}); });
 
 /* ---------- owner: QR ---------- */
 function links(){ const base = location.href.split('#')[0]; return [base, base + '#upload']; }
